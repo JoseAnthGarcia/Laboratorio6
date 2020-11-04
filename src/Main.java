@@ -1,3 +1,8 @@
+import BasedeDatos.ConnectDB;
+import Tablas.Artista;
+import Tablas.Tour;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+
 import java.util.Scanner;
 
 public class Main {
@@ -20,6 +25,29 @@ public class Main {
         /**
          * Comprobar el driver sql y completar lo demas
          */
-
+        while(true){
+            System.out.println(menu);
+            String opcion = sc.nextLine();
+            switch (opcion){
+                case "1":
+                    Tour tour = new Tour();
+                    Boolean respuesta = tour.escribirTour();
+                    if(respuesta){
+                        ConnectDB.agregaTour(tour);
+                    }
+                    break;
+                case "2":
+                    Artista
+                    break;
+                case "3":
+                    break;
+                case "4":
+                    break;
+                case "5":
+                    break;
+                case "6":
+                    break;
+            }
+        }
     }
 }

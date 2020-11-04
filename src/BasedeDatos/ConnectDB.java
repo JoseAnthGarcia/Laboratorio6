@@ -5,6 +5,7 @@ import Tablas.Tour;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class ConnectDB {
     /**
@@ -131,9 +132,45 @@ public class ConnectDB {
     }
 
     public static void agregaTour(Tour tour) {
-        /**
-         * COMPLETAR
-         */
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String sql = "INSERT INTO tour(nombre_tour, banda) "+
+                "VALUES ('"+tour.getNombre()+"','"+tour.getIdBanda()+"');";
+
+        int key = -1;
+        try (
+                Connection conn = DriverManager.getConnection(url, user, pass);
+                Statement stmt = conn.createStatement();) {
+
+            stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+            ResultSet rsKey = stmt.getGeneratedKeys();
+            key = rsKey.getInt(1);
+        } catch (
+                SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        String sql2 = "SELECT nombre_banda FROM banda WHERE idbanda = '"+tour.getIdBanda()+"';";
+        String nameBand = "";
+        try (
+                Connection conn2 = DriverManager.getConnection(url, user, pass);
+                Statement stmt2 = conn2.createStatement(); ResultSet rs2 = stmt2.executeQuery(sql2);) {
+
+            rs2.next();
+            nameBand = rs2.getString(1);
+        } catch (
+                SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        System.out.println("TOUR CREADO:");
+        System.out.println("ID: "+key+" | Nombre: "+tour.getNombre()+" | Banda: "+nameBand);
+
     }
 
     public static void agregaArtista(Artista artista) {
