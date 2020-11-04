@@ -174,17 +174,88 @@ public class ConnectDB {
     }
 
     public static void agregaArtista(Artista artista) {
-        /**
-         * COMPLETAR
-         */
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String sql = "INSERT INTO artista(nombre_artista, instrumento, banda)\n" +
+                "VALUES ('"+artista.getNombre()+"','"+artista.getIdInstrumento()+
+                "','"+artista.getIdBanda()+"');";
+
+        int key = -1;
+        try (
+                Connection conn = DriverManager.getConnection(url, user, pass);
+                Statement stmt = conn.createStatement();) {
+
+            stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+            ResultSet rsKey = stmt.getGeneratedKeys();
+            key = rsKey.getInt(1);
+        } catch (
+                SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        String sql2 = "SELECT nombre_inst FROM instrumento WHERE idinstrumento = '"+
+                artista.getIdInstrumento()+"'; ";
+        String nameInstrument= "";
+        try (
+                Connection conn2 = DriverManager.getConnection(url, user, pass);
+                Statement stmt2 = conn2.createStatement(); ResultSet rs2 = stmt2.executeQuery(sql2);) {
+
+            rs2.next();
+            nameInstrument = rs2.getString(1);
+        } catch (
+                SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        String sql3 = "SELECT nombre_banda FROM banda WHERE idbanda = '"+
+                artista.getIdBanda()+"';";
+        String nameBand = "";
+        try (
+                Connection conn3 = DriverManager.getConnection(url, user, pass);
+                Statement stmt3 = conn3.createStatement(); ResultSet rs3 = stmt3.executeQuery(sql2);) {
+
+            rs3.next();
+            nameBand = rs3.getString(1);
+        } catch (
+                SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        System.out.println("ARTISTA CREADO:");
+        System.out.println("ID: "+key+" | Nombre: "+artista.getNombre()
+                +" | Instrumento: "+nameInstrument+" | Banda: "+nameBand);
     }
 
 
     public static ArrayList<String> buscarCancionesporBanda(String idbanda) {
         ArrayList<String> listaCanciones = new ArrayList<>();
-        /**
-         * COMPLETAR
-         */
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String sql = "SELECT idcancion, nombre_cancion FROM cancion WHERE banda = '"+
+                idbanda+"';";
+        try (
+                Connection conn = DriverManager.getConnection(url, user, pass);
+                Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql);) {
+
+            while (rs.next()) {
+                String id = rs.getString(1);
+                String nameSong = rs.getString(2);
+                listaCanciones.add("ID: "+id+" | Nombre: "+nameSong);
+            }
+        } catch (
+                SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
         return listaCanciones;
     }
 
